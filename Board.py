@@ -10,39 +10,33 @@ Automatic: Pass the class a valid FEN string when created and all values will be
 """
 
 from defaultBoardPositions import *
+from Pieces import *
 from Move import Move
 
 
 class Board:
-    def __init__(self, starting_position=STARTING_POSITION, castling='KQkq', whiteTurn=True, enPassant='-', halfMove=0,
-                 fullMove=1):
+    def __init__(self, starting_position=STARTING_POSITION):
 
         # The two-dimensional list that holds the positions of the pieces. By default it is the regular starting
         # locations of the pieces
-        if type(starting_position) == list:
-            self.positions = starting_position
-        elif type(starting_position) == str:
-            self.positions = EMPTY_POSITION
-            self.__boardFromFEN(starting_position)
-        else:
-            print('Invalid board position given. Board is given the default starting position.\n')
-            self.positions = STARTING_POSITION
-            return
+        self.positions = [[' ' for x in range(8)] for x in range(8)]
 
         # attribute that describes whether each side can castle
-        self.castling = castling
+        self.castling = None
 
         # attribute that holds which turn it is. True is white's turn
-        self.whiteTurn = whiteTurn
+        self.whiteTurn = None
 
         # the current square that can be captured via en passant
-        self.enPassantTarget = enPassant
+        self.enPassantTarget = None
 
         # half move counter - cycles between 0 and 1
-        self.halfMoveCounter = halfMove
+        self.halfMoveCounter = None
 
         # full move counter - used for the 50 move rule
-        self.fullMoveCounter = fullMove
+        self.fullMoveCounter = None
+
+        self.__boardFromFEN(starting_position)
 
     # method that sets all attributes of the board from a given FEN string
     def __boardFromFEN(self, FEN):
@@ -57,7 +51,7 @@ class Board:
         col = 0
         for char in FEN_list[0]:
             if char.isalpha():
-                self.positions[row][col] = char
+                self.positions[row][col] = self.pieceFromCharacter(char, row, col)
                 col += 1
 
             elif char == '/':
@@ -121,13 +115,41 @@ class Board:
         square = self.algebraicToCoordinate(coordinates)
         self.positions[square[0]][square[1]] = piece
 
+    # returns a dictionary of the board's attributes
+    # for use by pieces and moves to determine if they are valid
+    def __getAttributeDict(self):
+        dict = {'whiteTurn': self.whiteTurn,
+                'castling': self.castling,
+                'enPassantTarget': self.enPassantTarget,
+                'halfMoveCounter': self.halfMoveCounter,
+                'fullMoveCounter': self.fullMoveCounter}
+
+        return dict
+
+    # returns a Piece object from a given character and coordinates
+    def pieceFromCharacter(self, piece, row, col):
+        pieceDict = {'r': Rook(row, col, False),
+                     'n': Knight(row, col, False),
+                     'b': Bishop(row, col, False),
+                     'q': Queen(row, col, False),
+                     'k': King(row, col, False),
+                     'p': Pawn(row, col, False),
+                     'R': Rook(row, col, True),
+                     'N': Knight(row, col, True),
+                     'B': Bishop(row, col, True),
+                     'Q': Queen(row, col, True),
+                     'K': King(row, col, True),
+                     'P': Pawn(row, col, True)}
+        return pieceDict[piece]
+
     def __str__(self):
         string = '+ - + - + - + - + - + - + - + - +\n'
 
         for row in self.positions:
             for position in row:
-                string += '| {} '.format(position)
+                string += '| {} '.format(str(position))
             string += '|\n'
             string += '+ - + - + - + - + - + - + - + - +\n'
 
         return string
+

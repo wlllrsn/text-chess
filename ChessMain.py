@@ -4,7 +4,7 @@ from Board import Board
 from Move import Move
 from defaultBoardPositions import *
 
-board1 = Board(123)
+board1 = Board(STARTING_POSITION)
 
 # board1.boardFromFEN('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1')
 
@@ -16,3 +16,4 @@ move1 = Move('e2', 'e4')
 
 board1.applyMove(move1)
 print(board1)
+
