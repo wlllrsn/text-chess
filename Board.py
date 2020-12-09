@@ -1,13 +1,13 @@
 # A class that contains a chess board, with piece positions
 
+from defaultBoardPositions import *
+
 class Board:
-    def __init__(self, default=True, positions=None):
+    def __init__(self, starting_position = STARTING_POSITION):
 
-        # The two-dimensional list that holds the positions of the pieces
-        self.positions = [[' ' for x in range(8)] for y in range(8)]
-
-        # if no parameters are passed, put the pieces in their starting positions
-        pass # will do later
+        # The two-dimensional list that holds the positions of the pieces. By default it is the regular starting
+        # locations of the pieces
+        self.positions = starting_position
 
     def __str__(self):
         string = '+ - + - + - + - + - + - + - + - +\n'
