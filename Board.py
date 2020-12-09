@@ -10,6 +10,7 @@ Automatic: Pass the class a valid FEN string when created and all values will be
 """
 
 from defaultBoardPositions import *
+from Move import Move
 
 
 class Board:
@@ -88,6 +89,37 @@ class Board:
         self.enPassantTarget = '-'
         self.halfMoveCounter = 0
         self.fullMoveCounter = 1
+
+    # applies a move to the board
+    def applyMove(self, move):
+        piece = self.getPiece(move.currentSquare)
+        if move.isValid():
+            self.clearSquare(move.currentSquare)
+            self.setSquare(move.destinationSquare, piece)
+
+    # returns the type of piece that is at a certain location on the board, and None if there is nothing there
+    def getPiece(self, location):
+        coordinates = self.algebraicToCoordinate(location)
+        if self.positions[coordinates[0]][coordinates[1]] != ' ':
+            return self.positions[coordinates[0]][coordinates[1]]
+        else:
+            return None
+
+    # converts from a letter-number sequence (i.e. e4, h2, etc.) to a row-column tuple
+    def algebraicToCoordinate(self, notation):
+        letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+        return 8 - int(notation[1]), letters.index(notation[0])
+
+    # empties a square
+    def clearSquare(self, coordinates):
+        square = self.algebraicToCoordinate(coordinates)
+        self.positions[square[0]][square[1]] = ' '
+
+    # sets a square to a piece value
+    def setSquare(self, coordinates, piece):
+        square = self.algebraicToCoordinate(coordinates)
+        self.positions[square[0]][square[1]] = piece
 
     def __str__(self):
         string = '+ - + - + - + - + - + - + - + - +\n'
