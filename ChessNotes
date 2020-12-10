@@ -3,3 +3,8 @@ Notes about the chess game
 Tasks to complete:
 - Print board to screen
 - read board from FEN
+- make each piece unique
+- Control piece movements
+- Move each piece correctly
+- Add castling
+- Add checks and checkmates

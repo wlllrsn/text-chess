@@ -87,13 +87,16 @@ class Board:
     # applies a move to the board
     def applyMove(self, move):
         piece = self.getPiece(move.currentSquare)
-        if move.isValid():
+        if piece.isValidMove(self.algebraicToCoordinate(move.destinationSquare), self.positions, self.__getAttributeDict()):
             self.clearSquare(move.currentSquare)
             self.setSquare(move.destinationSquare, piece)
 
     # returns the type of piece that is at a certain location on the board, and None if there is nothing there
     def getPiece(self, location):
         coordinates = self.algebraicToCoordinate(location)
+
+        #print(self.positions[coordinates[0]][coordinates[1]].col)
+
         if self.positions[coordinates[0]][coordinates[1]] != ' ':
             return self.positions[coordinates[0]][coordinates[1]]
         else:
