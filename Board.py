@@ -100,12 +100,15 @@ class Board:
             self.setSquare(move.destinationSquare, piece)
             piece.row = destination[0]
             piece.col = destination[1]
+            piece.increment_moves()
             return True
         return False
 
     # returns the type of piece that is at a certain location on the board, and None if there is nothing there
     def getPiece(self, location):
         coordinates = self.algebraicToCoordinate(location)
+        if not coordinates:
+            return None
 
         if self.positions[coordinates[0]][coordinates[1]] != ' ':
             return self.positions[coordinates[0]][coordinates[1]]
@@ -121,7 +124,11 @@ class Board:
         """
         letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-        return 8 - int(notation[1]), letters.index(notation[0])
+        try:
+            return 8 - int(notation[1]), letters.index(notation[0])
+        except ValueError:
+            print("Error: Invalid algebraic notation provided.")
+            return None
 
     def coordinateToAlgebraic(self, row, col):
         letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']

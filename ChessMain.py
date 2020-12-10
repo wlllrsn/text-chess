@@ -4,7 +4,7 @@ from Board import Board
 from Move import Move
 from defaultBoardPositions import *
 
-board1 = Board('3qk3/8/1n3r2/8/1Q3K2/1B3Q2/8/8 w - - 0 1')
+board1 = Board(STARTING_POSITION)
 
 print('\n PRINT "QUIT" TO QUIT THE GAME WHEN MOVING PIECES')
 

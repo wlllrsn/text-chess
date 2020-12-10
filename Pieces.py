@@ -209,6 +209,12 @@ class Queen(Piece):
         else:
             return False
 
+    def __str__(self):
+        if self.white:
+            return 'Q'
+        else:
+            return 'q'
+
 
 class King(Piece):
     def __init__(self, row, col, white):
