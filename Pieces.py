@@ -18,6 +18,38 @@ class Piece:
     def isValidMove(self, destinationSquare, position, attributeDict):
         pass
 
+    # returns true or false depending on if there is a piece between two squares, vertically or horizontally
+    def pieceBetweenRook(self, position, x1, y1, x2, y2):
+        diff_y = 1 if y1 < y2 else -1
+        diff_x = 1 if x1 < x2 else -1
+
+        # check vertical
+        if x1 == x2:
+            for y in range(y1 + diff_y, y2, diff_y):
+                if position[y][x1] != ' ':
+                    return True
+
+        # check horizontal
+        elif y1 == y2:
+            for x in range(x1 + diff_x, x2, diff_x):
+                if position[y1][x] != ' ':
+                    return True
+
+        return False
+
+    # method to determine if there are any pieces between two squares diagonally
+    def pieceBetweenBishop(self, position, x1, y1, x2, y2):
+        diff_y = 1 if y1 < y2 else -1
+        diff_x = 1 if x1 < x2 else -1
+
+        y_count = diff_y
+        for x in range(x1 + diff_x, x2, diff_x):
+            if position[y1 + y_count][x] != ' ':
+                return True
+            y_count += diff_y
+
+        return False
+
 
 class Rook(Piece):
     def __init__(self, row, col, white):
@@ -43,25 +75,6 @@ class Rook(Piece):
 
         else:
             return False
-
-    # returns true or false depending on if there is a piece between two squares, vertically or horizontally
-    def pieceBetweenRook(self, position, x1, y1, x2, y2):
-        diff_y = 1 if y1 < y2 else -1
-        diff_x = 1 if x1 < x2 else -1
-
-        # check vertical
-        if x1 == x2:
-            for y in range(y1 + diff_y, y2, diff_y):
-                if position[y][x1] != ' ':
-                    return True
-
-        # check horizontal
-        elif y1 == y2:
-            for x in range(x1 + diff_x, x2, diff_x):
-                if position[y1][x] != ' ':
-                    return True
-
-        return False
 
     def __str__(self):
         if self.white:
@@ -130,19 +143,6 @@ class Bishop(Piece):
         elif destinationSquare[1] + destinationSquare[0] == self.col + self.row:
             return not self.pieceBetweenBishop(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
 
-    # method to determine if there are any pieces between two squares diagonally
-    def pieceBetweenBishop(self, position, x1, y1, x2, y2):
-        diff_y = 1 if y1 < y2 else -1
-        diff_x = 1 if x1 < x2 else -1
-
-        y_count = 1
-        for x in range(x1 + diff_x, x2, diff_x):
-            if position[y1 + y_count*diff_y][x] != ' ':
-                return True
-            y_count += 1
-
-        return False
-
     def __str__(self):
         if self.white:
             return 'B'
@@ -183,44 +183,6 @@ class Queen(Piece):
 
         else:
             return False
-
-    # returns true or false depending on if there is a piece between two squares, vertically or horizontally
-    def pieceBetweenRook(self, position, x1, y1, x2, y2):
-        diff_y = 1 if y1 < y2 else -1
-        diff_x = 1 if x1 < x2 else -1
-
-        # check vertical
-        if x1 == x2:
-            for y in range(y1 + diff_y, y2, diff_y):
-                if position[y][x1] != ' ':
-                    return True
-
-        # check horizontal
-        elif y1 == y2:
-            for x in range(x1 + diff_x, x2, diff_x):
-                if position[y1][x] != ' ':
-                    return True
-
-        return False
-
-    # method to determine if there are any pieces between two squares diagonally
-    def pieceBetweenBishop(self, position, x1, y1, x2, y2):
-        diff_y = 1 if y1 < y2 else -1
-        diff_x = 1 if x1 < x2 else -1
-
-        y_count = 1
-        for x in range(x1 + diff_x, x2, diff_x):
-            if position[y1 + y_count * diff_y][x] != ' ':
-                return True
-            y_count += 1
-
-        return False
-
-    def __str__(self):
-        if self.white:
-            return 'Q'
-        else:
-            return 'q'
 
 
 class King(Piece):

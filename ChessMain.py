@@ -26,7 +26,7 @@ while True:
             startSquare = 'QUIT'
             break
 
-        if board1.getPiece(temp) != ' ':
+        if board1.getPiece(temp):
             startSquare = temp
         else:
             print('Invalid piece location. Try again.\n')

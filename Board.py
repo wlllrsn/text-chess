@@ -89,9 +89,12 @@ class Board:
     # applies a move to the board
     def applyMove(self, move):
         piece = self.getPiece(move.currentSquare)
-        if piece.isValidMove(self.algebraicToCoordinate(move.destinationSquare), self.positions, self.__getAttributeDict()):
+        destination = self.algebraicToCoordinate(move.destinationSquare)
+        if piece.isValidMove(destination, self.positions, self.__getAttributeDict()):
             self.clearSquare(move.currentSquare)
             self.setSquare(move.destinationSquare, piece)
+            piece.row = destination[0]
+            piece.col = destination[1]
             return True
         return False
 

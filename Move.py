@@ -14,5 +14,5 @@ class Move:
         return True
 
     def __str__(self):
-        string = 'Starting square: {}\nEnding square: {}'.format(self.currentSquare, self.destinationSquare)
+        string = 'Starting square: {}\nEnding square: {}\n'.format(self.currentSquare, self.destinationSquare)
         return string
