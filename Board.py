@@ -13,6 +13,8 @@ from defaultBoardPositions import *
 from Pieces import *
 from Move import Move
 
+from random import randint
+
 
 class Board:
     def __init__(self, starting_position=STARTING_POSITION):
@@ -90,6 +92,8 @@ class Board:
         if piece.isValidMove(self.algebraicToCoordinate(move.destinationSquare), self.positions, self.__getAttributeDict()):
             self.clearSquare(move.currentSquare)
             self.setSquare(move.destinationSquare, piece)
+            return True
+        return False
 
     # returns the type of piece that is at a certain location on the board, and None if there is nothing there
     def getPiece(self, location):
@@ -107,6 +111,15 @@ class Board:
         letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
         return 8 - int(notation[1]), letters.index(notation[0])
+
+    def coordinateToAlgebraic(self, row, col):
+        letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+        string = ''
+        string += letters[col]
+        string += str(row)
+
+        return string
 
     # empties a square
     def clearSquare(self, coordinates):
@@ -145,14 +158,41 @@ class Board:
                      'P': Pawn(row, col, True)}
         return pieceDict[piece]
 
-    def __str__(self):
-        string = '+ - + - + - + - + - + - + - + - +\n'
+    # returns a random move from every possible move
+    def getRandomMove(self):
+        board_positions = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
+                           'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8',
+                           'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8',
+                           'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8',
+                           'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8',
+                           'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8',
+                           'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8',
+                           'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8']
 
+        move_list = []
+
+        for square in board_positions:
+            current_piece = self.getPiece(square)
+            if current_piece is not None and current_piece.white == self.whiteTurn:
+                # iterate through every square again and check if it's a valid move
+                for pos in board_positions:
+                    if current_piece.isValidMove(self.algebraicToCoordinate(pos), self.positions, self.__getAttributeDict()):
+                        move_list.append(Move(square, pos))
+
+        return move_list[randint(0, len(move_list))]
+
+    def __str__(self):
+        string = '    a   b   c   d   e   f   g   h\n'
+        string += '  + - + - + - + - + - + - + - + - +\n'
+
+        row_val = 8
         for row in self.positions:
+            string += '{} '.format(str(row_val))
             for position in row:
                 string += '| {} '.format(str(position))
             string += '|\n'
-            string += '+ - + - + - + - + - + - + - + - +\n'
+            string += '  + - + - + - + - + - + - + - + - +\n'
+            row_val -= 1
 
         return string
 

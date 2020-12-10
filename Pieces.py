@@ -15,7 +15,7 @@ class Piece:
         else:
             return False
 
-    def isValidMove(self, destinationSqure, position, attributeDict):
+    def isValidMove(self, destinationSquare, position, attributeDict):
         pass
 
 
@@ -137,8 +137,6 @@ class Bishop(Piece):
 
         y_count = 1
         for x in range(x1 + diff_x, x2, diff_x):
-
-            print("X: {}, Y: {}".format(x, y1 + y_count*diff_y))
             if position[y1 + y_count*diff_y][x] != ' ':
                 return True
             y_count += 1
@@ -174,8 +172,9 @@ class Queen(Piece):
 
         # rook rule
         if destinationSquare[0] == self.row or destinationSquare[1] == self.col:
-            return not self.pieceBetweenRook(position, self.col, destinationSquare[1], self.row, destinationSquare[0])
+            return not self.pieceBetweenRook(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
 
+        # bishop rules
         if destinationSquare[1] - destinationSquare[0] == self.col - self.row:
             return not self.pieceBetweenBishop(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
 
@@ -211,8 +210,6 @@ class Queen(Piece):
 
         y_count = 1
         for x in range(x1 + diff_x, x2, diff_x):
-
-            print("X: {}, Y: {}".format(x, y1 + y_count * diff_y))
             if position[y1 + y_count * diff_y][x] != ' ':
                 return True
             y_count += 1
@@ -278,6 +275,12 @@ class Pawn(Piece):
             return False
 
         if self.white:
+            # first move? can move two spaces
+            if self.row == 6:
+                if destinationSquare[0] == 4 and destinationSquare[1] == self.col:
+                    if destination == ' ' and position[self.row - 1][self.col]:
+                        return True
+
             # pawns must move to the next row every move
             if destinationSquare[0] != self.row - 1:
                 return False
@@ -294,6 +297,11 @@ class Pawn(Piece):
                 return False
 
         else:
+            if self.row == 1:
+                if destinationSquare[0] == 3 and destinationSquare[1] == self.col:
+                    if destination == ' ' and position[self.row + 1][self.col]:
+                        return True
+
             if destinationSquare[0] != self.row + 1:
                 return False
 

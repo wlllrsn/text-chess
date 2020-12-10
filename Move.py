@@ -12,3 +12,7 @@ class Move:
 
     def isValid(self):
         return True
+
+    def __str__(self):
+        string = 'Starting square: {}\nEnding square: {}'.format(self.currentSquare, self.destinationSquare)
+        return string
