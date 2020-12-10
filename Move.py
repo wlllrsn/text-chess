@@ -1,6 +1,8 @@
 '''
 A class that handles piece movement. Can be passed to a board object via its applyMove(Move) method
 
+Methods:
+    isValid: Currently returns True
 
 '''
 

@@ -88,6 +88,11 @@ class Board:
 
     # applies a move to the board
     def applyMove(self, move):
+        """
+        :param move: a Move object with the necessary attributes
+        :type move: Move
+        :return: True or False if the move was valid or not
+        """
         piece = self.getPiece(move.currentSquare)
         destination = self.algebraicToCoordinate(move.destinationSquare)
         if piece.isValidMove(destination, self.positions, self.__getAttributeDict()):
@@ -102,8 +107,6 @@ class Board:
     def getPiece(self, location):
         coordinates = self.algebraicToCoordinate(location)
 
-        #print(self.positions[coordinates[0]][coordinates[1]].col)
-
         if self.positions[coordinates[0]][coordinates[1]] != ' ':
             return self.positions[coordinates[0]][coordinates[1]]
         else:
@@ -111,6 +114,11 @@ class Board:
 
     # converts from a letter-number sequence (i.e. e4, h2, etc.) to a row-column tuple
     def algebraicToCoordinate(self, notation):
+        """
+        :param notation: the algebraic notation of a coordinate on a chess board (i.e. e5, b4)
+        :type notation: str
+        :return: a tuple with the format (row int, col int)
+        """
         letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
         return 8 - int(notation[1]), letters.index(notation[0])
@@ -147,6 +155,15 @@ class Board:
 
     # returns a Piece object from a given character and coordinates
     def pieceFromCharacter(self, piece, row, col):
+        """
+        :param piece: one-character string representing the piece to be created
+        :type piece: str
+        :param row: row of the piece to be created
+        :type row: int
+        :param col: column of the piece to be created
+        :type col: int
+        :return: a Piece object (or subclass) with necessary attributes
+        """
         pieceDict = {'r': Rook(row, col, False),
                      'n': Knight(row, col, False),
                      'b': Bishop(row, col, False),

@@ -3,11 +3,22 @@ General class that can store piece attributes. Will have subclasses for every ot
 
 '''
 
+
 class Piece:
     def __init__(self, row, col, white):
+        """
+        :param row: represents the row of the piece (0-7)
+        :type row: int
+        :param col: represents the column of the piece (0-7)
+        :type col: int
+        :param white: True if the piece is white, False if the piece is black
+        :type white: bool
+        """
         self.row = row
         self.col = col
         self.white = white
+
+        self.__moves = 0
 
     def squareOnBoard(self, square):
         if square[0] in range(0, 8) and square[1] in range(0, 8):
@@ -49,6 +60,20 @@ class Piece:
             y_count += diff_y
 
         return False
+
+    def increment_moves(self):
+        """
+        increases the number of moves the piece has made by 1
+        """
+        self.__moves += 1
+
+    def hasMoved(self):
+        """
+        Indicates if the piece has already moved in the game or not. Useful for castling and pawn movement.
+
+        :return: boolean. True if the piece has moved, False if it hasn't
+        """
+        return bool(self.__moves)
 
 
 class Rook(Piece):
@@ -284,3 +309,5 @@ class Pawn(Piece):
             return 'P'
         else:
             return 'p'
+
+
