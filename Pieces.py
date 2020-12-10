@@ -18,7 +18,11 @@ class Piece:
         self.col = col
         self.white = white
 
+        # The number of moves the piece has made in a game
         self.__moves = 0
+
+        # a list of destination squares that the piece can legally move to
+        self.legal_moves = []
 
     def squareOnBoard(self, square):
         if square[0] in range(0, 8) and square[1] in range(0, 8):
@@ -61,12 +65,14 @@ class Piece:
 
         return False
 
+    # increments the total moves by 1
     def increment_moves(self):
         """
         increases the number of moves the piece has made by 1
         """
         self.__moves += 1
 
+    # returns true if the piece has moved in the game
     def hasMoved(self):
         """
         Indicates if the piece has already moved in the game or not. Useful for castling and pawn movement.
@@ -74,6 +80,32 @@ class Piece:
         :return: boolean. True if the piece has moved, False if it hasn't
         """
         return bool(self.__moves)
+
+    # updates the legal move list
+    def update_legal_moves(self, position, attributeDict):
+        """
+        updates the legal_moves attribute of the class
+
+        :param position: the position matrix of the current game
+        :type position: list
+        :param attributeDict: the dictionary of attributes for the current game
+        :type attributeDict: dict
+        """
+        board_positions = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
+                           'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8',
+                           'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8',
+                           'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8',
+                           'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8',
+                           'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8',
+                           'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8',
+                           'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8']
+
+        # empty the list first. Probably not the most efficient but a simple solution
+        self.legal_moves.clear()
+
+        for square in board_positions:
+            if self.isValidMove(square, position, attributeDict):
+                self.legal_moves.append(square)
 
 
 class Rook(Piece):
