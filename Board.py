@@ -23,6 +23,9 @@ class Board:
         # locations of the pieces
         self.positions = [[' ' for x in range(8)] for x in range(8)]
 
+        # List of all the pieces on the board. First list is black pieces, second list is white pieces
+        self.pieces = [[], []]
+
         # attribute that describes whether each side can castle
         self.castling = None
 
@@ -39,6 +42,7 @@ class Board:
         self.fullMoveCounter = None
 
         self.__boardFromFEN(starting_position)
+
 
     # method that sets all attributes of the board from a given FEN string
     def __boardFromFEN(self, FEN):
@@ -78,6 +82,9 @@ class Board:
         self.halfMoveCounter = int(FEN_list[4])
         self.fullMoveCounter = int(FEN_list[5])
 
+        self.update_pieces()
+        self.update_moves()
+
     # used by boardFromFEN method when given an invalid FEN string
     def __giveAttributesDefaultValues(self):
         self.castling = 'KQkq'
@@ -93,14 +100,20 @@ class Board:
         :type move: Move
         :return: True or False if the move was valid or not
         """
+
+        self.update_moves()
+
         piece = self.getPiece(move.currentSquare)
         destination = self.algebraicToCoordinate(move.destinationSquare)
-        if piece.isValidMove(destination, self.positions, self.__getAttributeDict()):
+        if move.destinationSquare in piece.legal_moves:
             self.clearSquare(move.currentSquare)
             self.setSquare(move.destinationSquare, piece)
             piece.row = destination[0]
             piece.col = destination[1]
             piece.increment_moves()
+
+            self.update_pieces()
+            self.update_moves()
             return True
         return False
 
@@ -135,7 +148,7 @@ class Board:
 
         string = ''
         string += letters[col]
-        string += str(row)
+        string += str(8-row)
 
         return string
 
@@ -187,6 +200,9 @@ class Board:
 
     # returns a random move from every possible move
     def getRandomMove(self):
+        self.update_pieces()
+        self.update_moves()
+
         board_positions = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
                            'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8',
                            'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8',
@@ -198,15 +214,47 @@ class Board:
 
         move_list = []
 
-        for square in board_positions:
-            current_piece = self.getPiece(square)
-            if current_piece is not None and current_piece.white == self.whiteTurn:
-                # iterate through every square again and check if it's a valid move
-                for pos in board_positions:
-                    if current_piece.isValidMove(self.algebraicToCoordinate(pos), self.positions, self.__getAttributeDict()):
-                        move_list.append(Move(square, pos))
+        for piece in self.pieces[int(self.whiteTurn)]:
+            for move in piece.legal_moves:
+                move_list.append(Move(self.coordinateToAlgebraic(piece.row, piece.col), move))
 
         return move_list[randint(0, len(move_list))]
+
+    # updates the piece list
+    def update_pieces(self):
+        board_positions = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8',
+                           'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8',
+                           'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8',
+                           'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8',
+                           'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8',
+                           'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8',
+                           'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8',
+                           'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8']
+
+        self.pieces[0].clear()
+        self.pieces[1].clear()
+
+        for square in board_positions:
+            current_piece = self.getPiece(square)
+            if current_piece is not None:
+                self.pieces[int(current_piece.white)].append(current_piece)
+
+        # print(self.pieces)
+
+    # updates the moves of every piece in the list
+    def update_moves(self):
+        attributes = self.__getAttributeDict()
+
+        for piece in self.pieces[0]:
+            piece.update_legal_moves(self.positions, attributes)
+
+        for piece in self.pieces[1]:
+            piece.update_legal_moves(self.positions, attributes)
+
+        # for piece in self.pieces[0]:
+        #     print(piece.legal_moves)
+        # for piece in self.pieces[1]:
+        #     print(piece.legal_moves)
 
     def __str__(self):
         string = '    a   b   c   d   e   f   g   h\n'

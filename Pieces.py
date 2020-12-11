@@ -104,8 +104,23 @@ class Piece:
         self.legal_moves.clear()
 
         for square in board_positions:
-            if self.isValidMove(square, position, attributeDict):
+            if self.isValidMove(self.algebraicToCoordinate(square), position, attributeDict):
                 self.legal_moves.append(square)
+
+    # converts from a letter-number sequence (i.e. e4, h2, etc.) to a row-column tuple
+    def algebraicToCoordinate(self, notation):
+        """
+        :param notation: the algebraic notation of a coordinate on a chess board (i.e. e5, b4)
+        :type notation: str
+        :return: a tuple with the format (row int, col int)
+        """
+        letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+        try:
+            return 8 - int(notation[1]), letters.index(notation[0])
+        except ValueError:
+            print("Error: Invalid algebraic notation provided.")
+            return None
 
 
 class Rook(Piece):
@@ -338,9 +353,6 @@ class Pawn(Piece):
 
             else:
                 return False
-
-
-
 
     def __str__(self):
         if self.white:
