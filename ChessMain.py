@@ -5,7 +5,7 @@ from Move import Move
 from defaultBoardPositions import *
 import time
 
-board1 = Board(STARTING_POSITION)
+board1 = Board('8/8/8/8/3K4/8/5p2/8 w - - 0 1')
 
 print('\n PRINT "QUIT" TO QUIT THE GAME WHEN MOVING PIECES')
 

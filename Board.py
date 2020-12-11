@@ -101,6 +101,9 @@ class Board:
         :return: True or False if the move was valid or not
         """
 
+        if move is None:
+            return True  # used as a placeholder - if a side has no legal moves, should be a stalemate. For now it passes
+
         self.update_moves()
 
         piece = self.getPiece(move.currentSquare)
@@ -170,7 +173,7 @@ class Board:
                 'enPassantTarget': self.enPassantTarget,
                 'halfMoveCounter': self.halfMoveCounter,
                 'fullMoveCounter': self.fullMoveCounter,
-                'checkMoves': self.get_moves(not self.whiteTurn)}
+                'checkMoves': self.get_check_moves(not self.whiteTurn)}
 
         return dict
 
@@ -218,6 +221,9 @@ class Board:
         for piece in self.pieces[int(self.whiteTurn)]:
             for move in piece.legal_moves:
                 move_list.append(Move(self.coordinateToAlgebraic(piece.row, piece.col), move))
+
+        if len(move_list) == 0:
+            return None
 
         return move_list[randint(0, len(move_list) - 1)]
 
@@ -269,7 +275,25 @@ class Board:
         moves = []
 
         for piece in self.pieces[color]:
-            for move in piece.legal_moves:
+            for move in piece.get_legal_moves():
+                moves.append(move)
+
+        return moves
+
+    # returns a list of all moves of a color that can check the opposing king (i.e. capture squares)
+    def get_check_moves(self, color):
+        """
+        :param color: a bool or int of the desired color. 0 or False for black, >0 or True for white
+        :type color: int
+        :type color: bool
+        :return: a list of legal moves for that color in algebraic notation (i.e. e4) that result in check of the
+                opposing king
+        """
+
+        moves = []
+
+        for piece in self.pieces[color]:
+            for move in piece.get_check_moves():
                 moves.append(move)
 
         return moves

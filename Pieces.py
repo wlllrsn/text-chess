@@ -107,6 +107,14 @@ class Piece:
             if self.isValidMove(self.algebraicToCoordinate(square), position, attributeDict):
                 self.legal_moves.append(square)
 
+    # returns legal moves
+    def get_legal_moves(self):
+        return self.legal_moves
+
+    # returns moves that result in check (i.e. squares that a piece can capture)
+    def get_check_moves(self):
+        return self.legal_moves
+
     # converts from a letter-number sequence (i.e. e4, h2, etc.) to a row-column tuple
     def algebraicToCoordinate(self, notation):
         """
@@ -328,6 +336,8 @@ class Pawn(Piece):
             return False
 
         if self.white:
+            if self.row == 0:  # remove once pawn promotion is added
+                return False
             # first move? can move two spaces
             if self.row == 6:
                 if destinationSquare[0] == 4 and destinationSquare[1] == self.col:
@@ -350,6 +360,8 @@ class Pawn(Piece):
                 return False
 
         else:
+            if self.row == 7:  # remove once pawn promotion is added
+                return False
             if self.row == 1:
                 if destinationSquare[0] == 3 and destinationSquare[1] == self.col:
                     if destination == ' ' and position[self.row + 1][self.col]:
@@ -366,6 +378,28 @@ class Pawn(Piece):
 
             else:
                 return False
+
+    def get_check_moves(self):
+        check_list = []
+
+        if self.white:
+
+            if self.row == 0:  # remove once pawn promotion is added
+                return []
+            if self.col < 7:
+                check_list.append(self.coordinateToAlgebraic(self.row - 1, self.col + 1))
+            if self.col > 0:
+                check_list.append(self.coordinateToAlgebraic(self.row - 1, self.col - 1))
+
+        else:
+            if self.row == 7:  # remove once pawn promotion is added
+                return []
+            if self.col < 7:
+                check_list.append(self.coordinateToAlgebraic(self.row + 1, self.col + 1))
+            if self.col > 0:
+                check_list.append(self.coordinateToAlgebraic(self.row + 1, self.col - 1))
+
+        return check_list
 
     def __str__(self):
         if self.white:
