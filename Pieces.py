@@ -122,6 +122,15 @@ class Piece:
             print("Error: Invalid algebraic notation provided.")
             return None
 
+    def coordinateToAlgebraic(self, row, col):
+        letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+
+        string = ''
+        string += letters[col]
+        string += str(8-row)
+
+        return string
+
 
 class Rook(Piece):
     def __init__(self, row, col, white):
@@ -130,9 +139,9 @@ class Rook(Piece):
     def isValidMove(self, destinationSquare, position, attributeDict):
         destination = position[destinationSquare[0]][destinationSquare[1]]
 
-        # can't move if it isn't your turn
-        if attributeDict['whiteTurn'] != self.white:
-            return False
+        # # can't move if it isn't your turn
+        # if attributeDict['whiteTurn'] != self.white:
+        #     return False
 
         # you can't move onto the same square as your own piece
         if destination != ' ' and destination.white == self.white:
@@ -162,9 +171,9 @@ class Knight(Piece):
     def isValidMove(self, destinationSquare, position, attributeDict):
         destination = position[destinationSquare[0]][destinationSquare[1]]
 
-        # can't move if it isn't your turn
-        if attributeDict['whiteTurn'] != self.white:
-            return False
+        # # can't move if it isn't your turn
+        # if attributeDict['whiteTurn'] != self.white:
+        #     return False
 
         # you can't move onto the same square as your own piece
         if destination != ' ' and destination.white == self.white:
@@ -197,9 +206,9 @@ class Bishop(Piece):
     def isValidMove(self, destinationSquare, position, attributeDict):
         destination = position[destinationSquare[0]][destinationSquare[1]]
 
-        # can't move if it isn't your turn
-        if attributeDict['whiteTurn'] != self.white:
-            return False
+        # # can't move if it isn't your turn
+        # if attributeDict['whiteTurn'] != self.white:
+        #     return False
 
         # you can't move onto the same square as your own piece
         if destination != ' ' and destination.white == self.white:
@@ -230,9 +239,9 @@ class Queen(Piece):
 
         destination = position[destinationSquare[0]][destinationSquare[1]]
 
-        # can't move if it isn't your turn
-        if attributeDict['whiteTurn'] != self.white:
-            return False
+        # # can't move if it isn't your turn
+        # if attributeDict['whiteTurn'] != self.white:
+        #     return False
 
         # you can't move onto the same square as your own piece
         if destination != ' ' and destination.white == self.white:
@@ -270,9 +279,9 @@ class King(Piece):
     def isValidMove(self, destinationSquare, position, attributeDict):
         destination = position[destinationSquare[0]][destinationSquare[1]]
 
-        # can't move if it isn't your turn
-        if attributeDict['whiteTurn'] != self.white:
-            return False
+        # # can't move if it isn't your turn
+        # if attributeDict['whiteTurn'] != self.white:
+        #     return False
 
         # you can't move onto the same square as your own piece
         if destination != ' ' and destination.white == self.white:
@@ -284,6 +293,10 @@ class King(Piece):
 
         # can't move more than two spaces away
         if abs(destinationSquare[0] - self.row) > 1 or abs(destinationSquare[1] - self.col) > 1:
+            return False
+
+        # can't move onto a square that can be captured by an opposing piece
+        if self.coordinateToAlgebraic(destinationSquare[0], destinationSquare[1]) in attributeDict['checkMoves']:
             return False
 
         return True
@@ -302,9 +315,9 @@ class Pawn(Piece):
     def isValidMove(self, destinationSquare, position, attributeDict):
         destination = position[destinationSquare[0]][destinationSquare[1]]
 
-        # can't move if it isn't your turn
-        if attributeDict['whiteTurn'] != self.white:
-            return False
+        # # can't move if it isn't your turn
+        # if attributeDict['whiteTurn'] != self.white:
+        #     return False
 
         # you can't move onto the same square as one of your other pieces
         if destination != ' ' and destination.white == self.white:

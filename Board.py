@@ -105,7 +105,7 @@ class Board:
 
         piece = self.getPiece(move.currentSquare)
         destination = self.algebraicToCoordinate(move.destinationSquare)
-        if move.destinationSquare in piece.legal_moves:
+        if move.destinationSquare in piece.legal_moves and self.whiteTurn == piece.white:
             self.clearSquare(move.currentSquare)
             self.setSquare(move.destinationSquare, piece)
             piece.row = destination[0]
@@ -148,7 +148,7 @@ class Board:
 
         string = ''
         string += letters[col]
-        string += str(8-row)
+        string += str(8 - row)
 
         return string
 
@@ -169,7 +169,8 @@ class Board:
                 'castling': self.castling,
                 'enPassantTarget': self.enPassantTarget,
                 'halfMoveCounter': self.halfMoveCounter,
-                'fullMoveCounter': self.fullMoveCounter}
+                'fullMoveCounter': self.fullMoveCounter,
+                'checkMoves': self.get_moves(not self.whiteTurn)}
 
         return dict
 
@@ -218,7 +219,7 @@ class Board:
             for move in piece.legal_moves:
                 move_list.append(Move(self.coordinateToAlgebraic(piece.row, piece.col), move))
 
-        return move_list[randint(0, len(move_list))]
+        return move_list[randint(0, len(move_list) - 1)]
 
     # updates the piece list
     def update_pieces(self):
@@ -255,6 +256,23 @@ class Board:
         #     print(piece.legal_moves)
         # for piece in self.pieces[1]:
         #     print(piece.legal_moves)
+
+    # returns a list of all legal moves of the given color
+    def get_moves(self, color):
+        """
+        :param color: a bool or int of the desired color. 0 or False for black, >0 or True for white
+        :type color: int
+        :type color: bool
+        :return: a list of legal moves for that color in algebraic notation (i.e. e4)
+        """
+
+        moves = []
+
+        for piece in self.pieces[color]:
+            for move in piece.legal_moves:
+                moves.append(move)
+
+        return moves
 
     def __str__(self):
         string = '    a   b   c   d   e   f   g   h\n'

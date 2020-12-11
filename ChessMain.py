@@ -3,6 +3,7 @@
 from Board import Board
 from Move import Move
 from defaultBoardPositions import *
+import time
 
 board1 = Board(STARTING_POSITION)
 
@@ -26,7 +27,7 @@ while True:
             startSquare = 'QUIT'
             break
 
-        if board1.getPiece(temp):
+        if board1.getPiece(temp) and board1.getPiece(temp).white == board1.whiteTurn:
             startSquare = temp
         else:
             print('Invalid piece location. Try again.\n')
@@ -50,6 +51,8 @@ while True:
 
     print('\n RANDOM MOVE BY BLACK \n')
     random_move = board1.getRandomMove()
+
+    time.sleep(3)
     print(random_move)
     board1.applyMove(random_move)
 
