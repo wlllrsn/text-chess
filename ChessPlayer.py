@@ -72,7 +72,7 @@ class ManualPlayer(Player):
 
         while True:
             temp = input("Select a destination for your {}: ".format(str(board.getPiece(startSquare))))
-            move = Move(startSquare, temp)
+            move = Move(board, startSquare, temp)
             if board.applyMove(move):
                 return move
             else:

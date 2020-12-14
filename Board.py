@@ -238,7 +238,7 @@ class Board:
 
         for piece in self.pieces[int(self.whiteTurn)]:
             for move in piece.legal_moves:
-                move_list.append(Move(self.coordinateToAlgebraic(piece.row, piece.col), move))
+                move_list.append(Move(self, self.coordinateToAlgebraic(piece.row, piece.col), move))
 
         if len(move_list) == 0:
             return None
@@ -271,10 +271,10 @@ class Board:
         attributes = self.__getAttributeDict()
 
         for piece in self.pieces[0]:
-            piece.update_legal_moves(self.positions, attributes)
+            piece.update_legal_moves(self)
 
         for piece in self.pieces[1]:
-            piece.update_legal_moves(self.positions, attributes)
+            piece.update_legal_moves(self)
 
         # for piece in self.pieces[0]:
         #     print(piece.legal_moves)

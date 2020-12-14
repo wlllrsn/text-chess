@@ -8,12 +8,19 @@ Methods:
 
 
 class Move:
-    def __init__(self, currentSquare, destinationSquare):
+    def __init__(self, board, currentSquare, destinationSquare):
         self.currentSquare = currentSquare
         self.destinationSquare = destinationSquare
 
-    def isValid(self):
-        return True
+        self.pieceTaken = board.getPiece(destinationSquare)
+
+    def is_capture_move(self):
+        """
+        tells if the move involves capturing an opposing piece
+        :return : True if the move captures another piece, false otherwise
+        """
+
+        return self.pieceTaken is not None
 
     def __str__(self):
         string = 'Starting square: {}\nEnding square: {}\n'.format(self.currentSquare, self.destinationSquare)

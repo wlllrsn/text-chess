@@ -30,7 +30,7 @@ class Piece:
         else:
             return False
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
+    def isValidMove(self, board, destinationSquare):
         pass
 
     # returns true or false depending on if there is a piece between two squares, vertically or horizontally
@@ -90,7 +90,7 @@ class Piece:
         return bool(self.__moves)
 
     # updates the legal move list
-    def update_legal_moves(self, position, attributeDict):
+    def update_legal_moves(self, board):
         """
         updates the legal_moves attribute of the class
 
@@ -113,7 +113,7 @@ class Piece:
 
         for square in board_positions:
             pos = self.algebraicToCoordinate(square)
-            if self.isValidMove(position[pos[0]][pos[1]], position, attributeDict):
+            if self.isValidMove(board, board.positions[pos[0]][pos[1]]):
                 self.legal_moves.append(square)
 
     # returns legal moves
@@ -153,7 +153,7 @@ class Rook(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destination, position, attributeDict):
+    def isValidMove(self, board, destination):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
@@ -168,7 +168,7 @@ class Rook(Piece):
             return False
 
         if destination.row == self.row or destination.col == self.col:
-            return not self.pieceBetweenRook(position, self.col, self.row, destination.col, destination.row)
+            return not self.pieceBetweenRook(board.positions, self.col, self.row, destination.col, destination.row)
 
         else:
             return False
@@ -184,7 +184,7 @@ class Knight(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destination, position, attributeDict):
+    def isValidMove(self, board, destination):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
@@ -218,7 +218,7 @@ class Bishop(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destination, position, attributeDict):
+    def isValidMove(self, board, destination):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
@@ -233,10 +233,10 @@ class Bishop(Piece):
             return False
 
         if destination.col - destination.row == self.col - self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
+            return not self.pieceBetweenBishop(board.positions, self.col, self.row, destination.col, destination.row)
 
         elif destination.col + destination.row == self.col + self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
+            return not self.pieceBetweenBishop(board.positions, self.col, self.row, destination.col, destination.row)
 
     def __str__(self):
         if self.white:
@@ -249,7 +249,7 @@ class Queen(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destination, position, attributeDict):
+    def isValidMove(self, board, destination):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
@@ -265,14 +265,14 @@ class Queen(Piece):
 
         # rook rule
         if destination.row == self.row or destination.col == self.col:
-            return not self.pieceBetweenRook(position, self.col, self.row, destination.col, destination.row)
+            return not self.pieceBetweenRook(board.positions, self.col, self.row, destination.col, destination.row)
 
         # bishop rules
         if destination.col - destination.row == self.col - self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
+            return not self.pieceBetweenBishop(board.positions, self.col, self.row, destination.col, destination.row)
 
         elif destination.col + destination.row == self.col + self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
+            return not self.pieceBetweenBishop(board.positions, self.col, self.row, destination.col, destination.row)
 
         else:
             return False
@@ -288,7 +288,7 @@ class King(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destination, position, attributeDict):
+    def isValidMove(self, board, destination):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
@@ -307,7 +307,7 @@ class King(Piece):
             return False
 
         # can't move onto a square that can be captured by an opposing piece
-        if self.coordinateToAlgebraic(destination.row, destination.col) in attributeDict['checkMoves']:
+        if self.coordinateToAlgebraic(destination.row, destination.col) in board.get_check_moves(not self.white):
             return False
 
         return True
@@ -323,7 +323,7 @@ class Pawn(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destination, position, attributeDict):
+    def isValidMove(self, board, destination):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
@@ -343,7 +343,7 @@ class Pawn(Piece):
             # first move? can move two spaces
             if not self.hasMoved():
                 if destination.row == self.row - 2 and destination.col == self.col:
-                    if destination.get_piece() is None and position[self.row - 1][self.col].is_empty():
+                    if destination.get_piece() is None and board.positions[self.row - 1][self.col].is_empty():
                         return True
 
             # pawns must move to the next row every move
@@ -366,7 +366,7 @@ class Pawn(Piece):
                 return False
             if not self.hasMoved():
                 if destination.row == self.row + 2 and destination.col == self.col:
-                    if destination.is_empty() and position[self.row + 1][self.col].is_empty():
+                    if destination.is_empty() and board.positions[self.row + 1][self.col].is_empty():
                         return True
 
             if destination.row != self.row + 1:
