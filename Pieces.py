@@ -47,7 +47,7 @@ class Piece:
         # check horizontal
         elif y1 == y2:
             for x in range(x1 + diff_x, x2, diff_x):
-                if position[y1][x] != ' ':
+                if not position[y1][x].is_empty():
                     return True
 
         return False
@@ -59,7 +59,7 @@ class Piece:
 
         y_count = diff_y
         for x in range(x1 + diff_x, x2, diff_x):
-            if position[y1 + y_count][x] != ' ':
+            if not position[y1 + y_count][x].is_empty():
                 return True
             y_count += diff_y
 
@@ -112,7 +112,8 @@ class Piece:
         self.legal_moves.clear()
 
         for square in board_positions:
-            if self.isValidMove(self.algebraicToCoordinate(square), position, attributeDict):
+            pos = self.algebraicToCoordinate(square)
+            if self.isValidMove(position[pos[0]][pos[1]], position, attributeDict):
                 self.legal_moves.append(square)
 
     # returns legal moves
@@ -152,23 +153,22 @@ class Rook(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
-        destination = position[destinationSquare[0]][destinationSquare[1]]
+    def isValidMove(self, destination, position, attributeDict):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
         #     return False
 
         # you can't move onto the same square as your own piece
-        if destination != ' ' and destination.white == self.white:
+        if destination.get_piece() is not None and destination.get_piece().white == self.white:
             return False
 
         # can't move to the square you are currently on
-        if destinationSquare[0] == self.row and destinationSquare[1] == self.col:
+        if destination.row == self.row and destination.col == self.col:
             return False
 
-        if destinationSquare[0] == self.row or destinationSquare[1] == self.col:
-            return not self.pieceBetweenRook(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
+        if destination.row == self.row or destination.col == self.col:
+            return not self.pieceBetweenRook(position, self.col, self.row, destination.col, destination.row)
 
         else:
             return False
@@ -184,25 +184,24 @@ class Knight(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
-        destination = position[destinationSquare[0]][destinationSquare[1]]
+    def isValidMove(self, destination, position, attributeDict):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
         #     return False
 
         # you can't move onto the same square as your own piece
-        if destination != ' ' and destination.white == self.white:
+        if destination.get_piece() is not None and destination.get_piece().white == self.white:
             return False
 
         # can't move to the square you are currently on
-        if destinationSquare[0] == self.row and destinationSquare[1] == self.col:
+        if destination.row == self.row and destination.col == self.col:
             return False
 
-        if abs(destinationSquare[0] - self.row) == 2 and abs(destinationSquare[1] - self.col) == 1:
+        if abs(destination.row - self.row) == 2 and abs(destination.col - self.col) == 1:
             return True
 
-        elif abs(destinationSquare[0] - self.row) == 1 and abs(destinationSquare[1] - self.col) == 2:
+        elif abs(destination.row - self.row) == 1 and abs(destination.col - self.col) == 2:
             return True
 
         else:
@@ -219,26 +218,25 @@ class Bishop(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
-        destination = position[destinationSquare[0]][destinationSquare[1]]
+    def isValidMove(self, destination, position, attributeDict):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
         #     return False
 
         # you can't move onto the same square as your own piece
-        if destination != ' ' and destination.white == self.white:
+        if destination.get_piece() is not None and destination.get_piece().white == self.white:
             return False
 
         # can't move to the square you are currently on
-        if destinationSquare[0] == self.row and destinationSquare[1] == self.col:
+        if destination.row == self.row and destination.col == self.col:
             return False
 
-        if destinationSquare[1] - destinationSquare[0] == self.col - self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
+        if destination.col - destination.row == self.col - self.row:
+            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
 
-        elif destinationSquare[1] + destinationSquare[0] == self.col + self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
+        elif destination.col + destination.row == self.col + self.row:
+            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
 
     def __str__(self):
         if self.white:
@@ -251,32 +249,30 @@ class Queen(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
-
-        destination = position[destinationSquare[0]][destinationSquare[1]]
+    def isValidMove(self, destination, position, attributeDict):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
         #     return False
 
         # you can't move onto the same square as your own piece
-        if destination != ' ' and destination.white == self.white:
+        if destination.get_piece() is not None and destination.get_piece().white == self.white:
             return False
 
         # can't move to the square you are currently on
-        if destinationSquare[0] == self.row and destinationSquare[1] == self.col:
+        if destination.row == self.row and destination.col == self.col:
             return False
 
         # rook rule
-        if destinationSquare[0] == self.row or destinationSquare[1] == self.col:
-            return not self.pieceBetweenRook(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
+        if destination.row == self.row or destination.col == self.col:
+            return not self.pieceBetweenRook(position, self.col, self.row, destination.col, destination.row)
 
         # bishop rules
-        if destinationSquare[1] - destinationSquare[0] == self.col - self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
+        if destination.col - destination.row == self.col - self.row:
+            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
 
-        elif destinationSquare[1] + destinationSquare[0] == self.col + self.row:
-            return not self.pieceBetweenBishop(position, self.col, self.row, destinationSquare[1], destinationSquare[0])
+        elif destination.col + destination.row == self.col + self.row:
+            return not self.pieceBetweenBishop(position, self.col, self.row, destination.col, destination.row)
 
         else:
             return False
@@ -292,27 +288,26 @@ class King(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
-        destination = position[destinationSquare[0]][destinationSquare[1]]
+    def isValidMove(self, destination, position, attributeDict):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
         #     return False
 
         # you can't move onto the same square as your own piece
-        if destination != ' ' and destination.white == self.white:
+        if destination.get_piece() is not None and destination.get_piece().white == self.white:
             return False
 
         # can't move to the square you are currently on
-        if destinationSquare[0] == self.row and destinationSquare[1] == self.col:
+        if destination.row == self.row and destination.col == self.col:
             return False
 
         # can't move more than two spaces away
-        if abs(destinationSquare[0] - self.row) > 1 or abs(destinationSquare[1] - self.col) > 1:
+        if abs(destination.row - self.row) > 1 or abs(destination.col - self.col) > 1:
             return False
 
         # can't move onto a square that can be captured by an opposing piece
-        if self.coordinateToAlgebraic(destinationSquare[0], destinationSquare[1]) in attributeDict['checkMoves']:
+        if self.coordinateToAlgebraic(destination.row, destination.col) in attributeDict['checkMoves']:
             return False
 
         return True
@@ -328,40 +323,39 @@ class Pawn(Piece):
     def __init__(self, row, col, white):
         super().__init__(row, col, white)
 
-    def isValidMove(self, destinationSquare, position, attributeDict):
-        destination = position[destinationSquare[0]][destinationSquare[1]]
+    def isValidMove(self, destination, position, attributeDict):
 
         # # can't move if it isn't your turn
         # if attributeDict['whiteTurn'] != self.white:
         #     return False
 
         # you can't move onto the same square as one of your other pieces
-        if destination != ' ' and destination.white == self.white:
+        if not destination.is_empty() and destination.get_piece().white == self.white:
             return False
 
         # can't move to the square you are currently on
-        if destinationSquare[0] == self.row and destinationSquare[1] == self.col:
+        if destination.row == self.row and destination.col == self.col:
             return False
 
         if self.white:
             if self.row == 0:  # remove once pawn promotion is added
                 return False
             # first move? can move two spaces
-            if self.row == 6:
-                if destinationSquare[0] == 4 and destinationSquare[1] == self.col:
-                    if destination == ' ' and position[self.row - 1][self.col]:
+            if not self.hasMoved():
+                if destination.row == self.row - 2 and destination.col == self.col:
+                    if destination.get_piece() is None and position[self.row - 1][self.col].is_empty():
                         return True
 
             # pawns must move to the next row every move
-            if destinationSquare[0] != self.row - 1:
+            if destination.row != self.row - 1:
                 return False
 
             # move directly in forward
-            elif destinationSquare[1] == self.col and destination == ' ':
+            elif destination.col == self.col and destination.is_empty():
                 return True
 
             # capture a piece diagonally
-            elif abs(destinationSquare[1] - self.col) == 1 and destination != ' ':
+            elif abs(destination.col - self.col) == 1 and not destination.is_empty():
                 return True
 
             else:
@@ -370,18 +364,18 @@ class Pawn(Piece):
         else:
             if self.row == 7:  # remove once pawn promotion is added
                 return False
-            if self.row == 1:
-                if destinationSquare[0] == 3 and destinationSquare[1] == self.col:
-                    if destination == ' ' and position[self.row + 1][self.col]:
+            if not self.hasMoved():
+                if destination.row == self.row + 2 and destination.col == self.col:
+                    if destination.is_empty() and position[self.row + 1][self.col].is_empty():
                         return True
 
-            if destinationSquare[0] != self.row + 1:
+            if destination.row != self.row + 1:
                 return False
 
-            elif destinationSquare[1] == self.col and destination == ' ':
+            elif destination.col == self.col and destination.get_piece() is None:
                 return True
 
-            elif abs(destinationSquare[1] - self.col) == 1 and destination != ' ':
+            elif abs(destination.col - self.col) == 1 and not destination.is_empty():
                 return True
 
             else:

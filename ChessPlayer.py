@@ -14,6 +14,11 @@ class Player:
     _counter = 0
 
     def __init__(self, isWhite, manual=True, name=None):
+        """
+        :param bool isWhite: True if the player controls white pieces, False if black
+        :param bool manual: True if the pieces are controlled manually, False if by the computer
+        :param str name: Optional string for the player's name.
+        """
         self.__isWhite = isWhite
         self.__isManual = manual
 

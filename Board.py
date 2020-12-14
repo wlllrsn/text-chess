@@ -12,6 +12,7 @@ Automatic: Pass the class a valid FEN string when created and all values will be
 from defaultBoardPositions import *
 from Pieces import *
 from Move import Move
+from ChessSquare import Square
 
 from random import randint
 
@@ -21,7 +22,7 @@ class Board:
 
         # The two-dimensional list that holds the positions of the pieces. By default it is the regular starting
         # locations of the pieces
-        self.positions = [[' ' for x in range(8)] for x in range(8)]
+        self.positions = [[Square(y, x) for x in range(8)] for y in range(8)]
 
         # List of all the pieces on the board. First list is black pieces, second list is white pieces
         self.pieces = [[], []]
@@ -56,7 +57,7 @@ class Board:
         col = 0
         for char in FEN_list[0]:
             if char.isalpha():
-                self.positions[row][col] = self.pieceFromCharacter(char, row, col)
+                self.positions[row][col].set_piece(self.pieceFromCharacter(char, row, col))
                 col += 1
 
             elif char == '/':
@@ -65,7 +66,7 @@ class Board:
 
             elif char.isnumeric():
                 for x in range(int(char)):
-                    self.positions[row][col] = ' '
+                    self.positions[row][col].set_piece(None)
                     col += 1
 
         # set move
@@ -145,10 +146,7 @@ class Board:
         if not coordinates:
             return None
 
-        if self.positions[coordinates[0]][coordinates[1]] != ' ':
-            return self.positions[coordinates[0]][coordinates[1]]
-        else:
-            return None
+        return self.positions[coordinates[0]][coordinates[1]].get_piece()
 
     # converts from a letter-number sequence (i.e. e4, h2, etc.) to a row-column tuple
     def algebraicToCoordinate(self, notation):
@@ -177,12 +175,12 @@ class Board:
     # empties a square
     def clearSquare(self, coordinates):
         square = self.algebraicToCoordinate(coordinates)
-        self.positions[square[0]][square[1]] = ' '
+        self.positions[square[0]][square[1]].set_piece(None)
 
     # sets a square to a piece value
     def setSquare(self, coordinates, piece):
         square = self.algebraicToCoordinate(coordinates)
-        self.positions[square[0]][square[1]] = piece
+        self.positions[square[0]][square[1]].set_piece(piece)
 
     # returns a dictionary of the board's attributes
     # for use by pieces and moves to determine if they are valid
@@ -340,7 +338,7 @@ class Board:
         for row in self.positions:
             string += '{} '.format(str(row_val))
             for position in row:
-                string += '| {} '.format(str(position))
+                string += '| {} '.format(str(position.get_piece()) if position.get_piece() is not None else ' ')
             string += '|\n'
             string += '  + - + - + - + - + - + - + - + - +\n'
             row_val -= 1
