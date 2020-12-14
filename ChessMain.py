@@ -5,7 +5,7 @@ from Move import Move
 from defaultBoardPositions import *
 import time
 
-board1 = Board('8/8/8/8/3K4/8/5p2/8 w - - 0 1')
+board1 = Board('8/1r6/8/8/8/5K2/3Q4/7k w - - 0 1')
 
 print('\n PRINT "QUIT" TO QUIT THE GAME WHEN MOVING PIECES')
 
@@ -50,9 +50,10 @@ while True:
     board1.whiteTurn = False
 
     print('\n RANDOM MOVE BY BLACK \n')
-    random_move = board1.getRandomMove()
 
     time.sleep(3)
+
+    random_move = board1.getRandomMove()
     print(random_move)
     board1.applyMove(random_move)
 

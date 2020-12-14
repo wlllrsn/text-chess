@@ -72,6 +72,14 @@ class Piece:
         """
         self.__moves += 1
 
+    # decrements teh total moves by 1
+    def decrement_moves(self):
+        """
+        decreases the number of moves the piece has made by 1
+        """
+
+        self.__moves -= 1
+
     # returns true if the piece has moved in the game
     def hasMoved(self):
         """

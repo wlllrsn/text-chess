@@ -43,7 +43,6 @@ class Board:
 
         self.__boardFromFEN(starting_position)
 
-
     # method that sets all attributes of the board from a given FEN string
     def __boardFromFEN(self, FEN):
         FEN_list = FEN.split()
@@ -101,14 +100,20 @@ class Board:
         :return: True or False if the move was valid or not
         """
 
+        # used as a placeholder - if a side has no legal moves, should be a stalemate. For now it passes
         if move is None:
-            return True  # used as a placeholder - if a side has no legal moves, should be a stalemate. For now it passes
+            return True
 
         self.update_moves()
 
         piece = self.getPiece(move.currentSquare)
+        starting = self.algebraicToCoordinate(move.currentSquare)
         destination = self.algebraicToCoordinate(move.destinationSquare)
         if move.destinationSquare in piece.legal_moves and self.whiteTurn == piece.white:
+            cleared_square = self.getPiece(move.destinationSquare)
+            if cleared_square is None:
+                cleared_square = ' '
+
             self.clearSquare(move.currentSquare)
             self.setSquare(move.destinationSquare, piece)
             piece.row = destination[0]
@@ -117,6 +122,20 @@ class Board:
 
             self.update_pieces()
             self.update_moves()
+
+            # if the king is in check after the move, undo the actions and return false. The move is illegal.
+            if self.get_king_position(self.whiteTurn) in self.get_check_moves(not self.whiteTurn):
+                self.setSquare(move.currentSquare, piece)
+                self.setSquare(move.destinationSquare, cleared_square)
+
+                piece.row = starting[0]
+                piece.col = starting[1]
+                piece.decrement_moves()
+
+                self.update_pieces()
+                self.update_moves()
+
+                return False
             return True
         return False
 
@@ -173,7 +192,8 @@ class Board:
                 'enPassantTarget': self.enPassantTarget,
                 'halfMoveCounter': self.halfMoveCounter,
                 'fullMoveCounter': self.fullMoveCounter,
-                'checkMoves': self.get_check_moves(not self.whiteTurn)}
+                'checkMoves': self.get_check_moves(not self.whiteTurn),
+                'kingLocation': self.get_king_position(self.whiteTurn)}
 
         return dict
 
@@ -297,6 +317,20 @@ class Board:
                 moves.append(move)
 
         return moves
+
+    # returns the location of the king in algebraic notation for a given color
+    def get_king_position(self, color):
+        """
+        :param color: white or black
+        :type color: bool
+        :return: the
+        """
+
+        for piece in self.pieces[color]:
+            if isinstance(piece, King):
+                return self.coordinateToAlgebraic(piece.row, piece.col)
+        # return None if there is no king
+        return None
 
     def __str__(self):
         string = '    a   b   c   d   e   f   g   h\n'
